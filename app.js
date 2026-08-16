@@ -16,6 +16,26 @@ const STORAGE_KEYS = {
   customBaseUrl: (stack) => `tt_base_override_${stack}`,
 };
 
+// ---------------------------------------------------------------------------
+// SECURITY NOTE — localStorage for the JWT (deliberate, not an oversight)
+//
+// Storing the token in localStorage means any JS running on this page (e.g.
+// an XSS payload from a supply-chain attack or bad input sanitization) could
+// read it. That's a known trade-off for this pattern.
+//
+// This is fine here because this is a learning project comparing four
+// backend stacks, not handling real user data. It is NOT the recommended
+// pattern for a production app. The production-grade fix is to have the
+// backend set the JWT as an httpOnly cookie instead (browser JS can't read
+// it at all), which trades this risk for some CORS/CSRF complexity — a good
+// thing to build properly once auth is covered per-stack, rather than
+// bolting on here.
+//
+// Kept localStorage (vs. an in-memory-only token) specifically so the
+// session survives a page refresh, which matters for a UI you're actively
+// testing against four different backends.
+// ---------------------------------------------------------------------------
+
 let state = {
   stack: localStorage.getItem(STORAGE_KEYS.activeStack) || "node",
   token: null,
