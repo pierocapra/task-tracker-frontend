@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task Tracker — Multi-Stack Client</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">◱</span>
+        <h1>Task Tracker</h1>
+      </div>
+
+      <nav class="stack-switcher" id="stackSwitcher">
+        <button class="stack-tab" data-stack="node">
+          <span class="dot dot-node"></span> Node.js
+        </button>
+        <button class="stack-tab is-locked" data-stack="aspnet" disabled>
+          <span class="dot dot-aspnet"></span> ASP.NET <em>Phase 2</em>
+        </button>
+        <button class="stack-tab is-locked" data-stack="django" disabled>
+          <span class="dot dot-django"></span> Django <em>Phase 3</em>
+        </button>
+        <button class="stack-tab is-locked" data-stack="spring" disabled>
+          <span class="dot dot-spring"></span> Spring Boot <em>Phase 4</em>
+        </button>
+      </nav>
+    </header>
+
+    <div class="connection-bar">
+      <span class="conn-dot" id="connDot"></span>
+      <code id="apiBaseDisplay">—</code>
+      <button class="link-btn" id="editApiBase">change</button>
+      <span class="conn-status" id="connStatus">checking…</span>
+    </div>
+
+    <main class="content">
+
+      <!-- Auth card -->
+      <section class="card" id="authCard">
+        <div class="tabs">
+          <button class="tab-btn is-active" data-form="login">Log in</button>
+          <button class="tab-btn" data-form="signup">Sign up</button>
+        </div>
+
+        <form id="loginForm" class="auth-form">
+          <label>Email
+            <input type="email" name="email" required autocomplete="username">
+          </label>
+          <label>Password
+            <input type="password" name="password" required autocomplete="current-password">
+          </label>
+          <button type="submit" class="primary-btn">Log in</button>
+          <p class="form-error" data-for="login"></p>
+        </form>
+
+        <form id="signupForm" class="auth-form is-hidden">
+          <label>Name
+            <input type="text" name="name" required autocomplete="name">
+          </label>
+          <label>Email
+            <input type="email" name="email" required autocomplete="email">
+          </label>
+          <label>Password
+            <input type="password" name="password" required autocomplete="new-password" minlength="8">
+          </label>
+          <button type="submit" class="primary-btn">Create account</button>
+          <p class="form-error" data-for="signup"></p>
+        </form>
+      </section>
+
+      <!-- Tasks -->
+      <section class="card is-hidden" id="taskCard">
+        <div class="task-card-header">
+          <div>
+            <span class="eyebrow">signed in as</span>
+            <strong id="userLabel">—</strong>
+          </div>
+          <button class="ghost-btn" id="logoutBtn">Log out</button>
+        </div>
+
+        <form id="newTaskForm" class="new-task-form">
+          <input type="text" name="title" placeholder="New task title…" required maxlength="200">
+          <input type="text" name="description" placeholder="Description (optional)" maxlength="500">
+          <button type="submit" class="primary-btn">Add</button>
+        </form>
+
+        <p class="form-error" data-for="task"></p>
+
+        <ul class="task-list" id="taskList">
+          <!-- rendered by app.js -->
+        </ul>
+
+        <p class="empty-state is-hidden" id="emptyState">No tasks yet. Add your first one above.</p>
+      </section>
+
+    </main>
+
+    <footer class="footer">
+      <span>Talking to whichever backend the switcher above points at — same UI, four ecosystems.</span>
+    </footer>
+  </div>
+
+  <template id="taskItemTemplate">
+    <li class="task-item">
+      <label class="task-check">
+        <input type="checkbox" class="task-toggle">
+        <span class="checkmark"></span>
+      </label>
+      <div class="task-body">
+        <input type="text" class="task-title-input" />
+        <input type="text" class="task-desc-input" />
+        <span class="task-meta"></span>
+      </div>
+      <div class="task-actions">
+        <button class="icon-btn task-save is-hidden" title="Save">Save</button>
+        <button class="icon-btn task-edit" title="Edit">Edit</button>
+        <button class="icon-btn task-delete" title="Delete">Delete</button>
+      </div>
+    </li>
+  </template>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
