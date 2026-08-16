@@ -194,17 +194,21 @@ function initAuthForms() {
     e.preventDefault();
     setError("signup", "");
     const fd = new FormData(signupForm);
+    const email = fd.get("email");
+    const password = fd.get("password");
     try {
-      const data = await apiFetch(API_ROUTES.signup, {
+      // Signup only creates the user — no token comes back — so immediately
+      // log in with the same credentials to get a session going.
+      await apiFetch(API_ROUTES.signup, {
         method: "POST",
-        body: JSON.stringify({
-          name: fd.get("name"),
-          email: fd.get("email"),
-          password: fd.get("password"),
-        }),
+        body: JSON.stringify({ name: fd.get("name"), email, password }),
       });
-      const label = data?.user?.name || fd.get("name");
-      saveSession(data.token, label);
+      const loginData = await apiFetch(API_ROUTES.login, {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      });
+      const label = loginData?.user?.name || fd.get("name");
+      saveSession(loginData.token, label);
       renderAuthState();
       loadTasks();
     } catch (err) {
