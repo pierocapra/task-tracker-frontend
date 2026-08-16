@@ -34,5 +34,5 @@ const API_ROUTES = {
   signup: "/auth/signup",
   login: "/auth/login",
   tasks: "/tasks", // GET (list) / POST (create)
-  task: (id) => `/api/tasks/${id}`, // PUT (update) / DELETE
+  task: (id) => `/tasks/${id}`, // PUT (update) / DELETE
 };
