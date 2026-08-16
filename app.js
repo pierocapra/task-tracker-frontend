@@ -71,11 +71,16 @@ async function refreshConnectionStatus() {
   dot.className = "conn-dot";
   statusEl.textContent = "checking…";
   try {
-    // Any lightweight GET works for a reachability check; tasks endpoint needs auth
-    // so we just check the origin responds at all.
-    await fetch(base, { method: "GET", mode: "cors" }).catch(() => {});
-    dot.className = "conn-dot is-ok";
-    statusEl.textContent = "reachable";
+    // Hits a dedicated /health route on the backend — see deploy notes for the
+    // matching Express route. A 404 here usually means /health hasn't been added yet.
+    const res = await fetch(`${base.replace(/\/$/, "")}/health`, { method: "GET", mode: "cors" });
+    if (res.ok) {
+      dot.className = "conn-dot is-ok";
+      statusEl.textContent = "reachable";
+    } else {
+      dot.className = "conn-dot is-down";
+      statusEl.textContent = `responded ${res.status}`;
+    }
   } catch (_) {
     dot.className = "conn-dot is-down";
     statusEl.textContent = "unreachable";
