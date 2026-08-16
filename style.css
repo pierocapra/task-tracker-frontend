@@ -363,8 +363,7 @@ input:focus-visible {
   gap: 2px;
 }
 
-.task-title-input,
-.task-desc-input {
+.task-title-input {
   background: transparent;
   border: 1px solid transparent;
   color: var(--text);
@@ -375,19 +374,12 @@ input:focus-visible {
   width: 100%;
 }
 
-.task-desc-input {
-  font-size: 12.5px;
-  color: var(--text-dim);
-}
-
 .task-item.is-done .task-title-input { color: var(--text-dim); text-decoration: line-through; }
 
-.task-title-input[readonly],
-.task-desc-input[readonly] {
+.task-title-input[readonly] {
   cursor: default;
 }
-.task-title-input:not([readonly]),
-.task-desc-input:not([readonly]) {
+.task-title-input:not([readonly]) {
   background: var(--surface-2);
   border-color: var(--border);
 }

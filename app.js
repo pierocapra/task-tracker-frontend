@@ -3,9 +3,9 @@
 // Assumed API shape (adjust API_ROUTES / field names in config.js if yours differs):
 //   POST  /api/auth/signup { name, email, password } -> { token, user }
 //   POST  /api/auth/login  { email, password }        -> { token, user }
-//   GET   /api/tasks                                   -> [ { id, title, description, completed, createdAt } ]
-//   POST  /api/tasks       { title, description }      -> task
-//   PUT   /api/tasks/:id   { title, description, completed } -> task
+//   GET   /api/tasks                                   -> [ { id, title, completed, createdAt } ]
+//   POST  /api/tasks       { title }                    -> task
+//   PUT   /api/tasks/:id   { title, completed }          -> task
 //   DELETE /api/tasks/:id
 // ---------------------------------------------------------------------------
 
@@ -248,7 +248,6 @@ function renderTasks(tasks) {
     const li = node.querySelector(".task-item");
     const toggle = node.querySelector(".task-toggle");
     const titleInput = node.querySelector(".task-title-input");
-    const descInput = node.querySelector(".task-desc-input");
     const meta = node.querySelector(".task-meta");
     const editBtn = node.querySelector(".task-edit");
     const saveBtn = node.querySelector(".task-save");
@@ -258,9 +257,7 @@ function renderTasks(tasks) {
     toggle.checked = !!task.completed;
     li.classList.toggle("is-done", !!task.completed);
     titleInput.value = task.title || "";
-    descInput.value = task.description || "";
     titleInput.readOnly = true;
-    descInput.readOnly = true;
     meta.textContent = task.id != null ? `#${task.id}` : "";
 
     toggle.addEventListener("change", async () => {
@@ -279,7 +276,6 @@ function renderTasks(tasks) {
     editBtn.addEventListener("click", () => {
       const startEditing = titleInput.readOnly; // was read-only, so this click starts editing
       titleInput.readOnly = !startEditing;
-      descInput.readOnly = !startEditing;
       saveBtn.classList.toggle("is-hidden", !startEditing);
       if (startEditing) titleInput.focus();
     });
@@ -288,10 +284,9 @@ function renderTasks(tasks) {
       try {
         await apiFetch(API_ROUTES.task(task.id), {
           method: "PUT",
-          body: JSON.stringify({ title: titleInput.value, description: descInput.value }),
+          body: JSON.stringify({ title: titleInput.value }),
         });
         titleInput.readOnly = true;
-        descInput.readOnly = true;
         saveBtn.classList.add("is-hidden");
       } catch (err) {
         setError("task", err.message);
@@ -322,7 +317,7 @@ function initNewTaskForm() {
     try {
       await apiFetch(API_ROUTES.tasks, {
         method: "POST",
-        body: JSON.stringify({ title: fd.get("title"), description: fd.get("description") }),
+        body: JSON.stringify({ title: fd.get("title") }),
       });
       form.reset();
       loadTasks();
