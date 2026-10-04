@@ -20,7 +20,7 @@ const STACK_CONFIG = {
   },
   django: {
     label: "Django",
-    baseUrl: "", // filled in during Phase 3
+    baseUrl: "https://task-tracker-django-2pas.onrender.com", // filled in during Phase 3
   },
   spring: {
     label: "Spring Boot",
