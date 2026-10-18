@@ -24,7 +24,7 @@ const STACK_CONFIG = {
   },
   spring: {
     label: "Spring Boot",
-    baseUrl: "", // filled in during Phase 4
+    baseUrl: "https://task-tracker-spring.onrender.com",
   },
 };
 
