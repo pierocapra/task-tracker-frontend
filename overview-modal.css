@@ -1,0 +1,159 @@
+/* ---------------------------------------------------------------------------
+   overview-modal.css — styles for the "Project Overview" modal.
+   Self-contained: every class is prefixed `ov-` and the colours are scoped to
+   the dialog, so it can't clash with style.css. To match your theme exactly,
+   change the variables in the .ov-dialog block below.
+--------------------------------------------------------------------------- */
+
+.ov-dialog {
+  --ov-bg: #0d1117;
+  --ov-panel: #161b22;
+  --ov-panel-2: #1c232d;
+  --ov-border: #2a3340;
+  --ov-text: #d6dde6;
+  --ov-muted: #8b97a6;
+  --ov-accent: #58a6ff;
+  --ov-accent-2: #7ee787;
+  --ov-warn-bg: #2a1f0d;
+  --ov-warn-border: #d29922;
+  --ov-warn-text: #f2cc60;
+  --ov-code-bg: #0b0f14;
+
+  width: min(860px, calc(100vw - 24px));
+  max-height: calc(100vh - 32px);
+  padding: 0;
+  border: 1px solid var(--ov-border);
+  border-radius: 12px;
+  background: var(--ov-bg);
+  color: var(--ov-text);
+  font: 15px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+.ov-dialog[open] { display: flex; flex-direction: column; }
+.ov-dialog::backdrop { background: rgba(5, 8, 12, 0.72); backdrop-filter: blur(3px); }
+
+.ov-dialog * { box-sizing: border-box; }
+.ov-dialog a { color: var(--ov-accent); text-decoration: none; }
+.ov-dialog a:hover { text-decoration: underline; }
+
+/* header */
+.ov-header {
+  flex: 0 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 14px 20px; border-bottom: 1px solid var(--ov-border); background: var(--ov-panel);
+}
+.ov-title { margin: 0; font-size: 18px; }
+.ov-eyebrow {
+  display: block; margin-bottom: 2px;
+  font: 600 11px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--ov-accent-2);
+}
+.ov-close {
+  appearance: none; border: 1px solid var(--ov-border); background: var(--ov-panel-2);
+  color: var(--ov-text); width: 34px; height: 34px; border-radius: 8px;
+  font-size: 20px; line-height: 1; cursor: pointer;
+}
+.ov-close:hover { border-color: var(--ov-accent); }
+.ov-close:focus-visible, .ov-nav a:focus-visible { outline: 2px solid var(--ov-accent); outline-offset: 2px; }
+
+/* section nav */
+.ov-dialog .ov-nav {
+  /* flex: 0 0 auto stops the flex column from squashing the nav to zero height
+     (overflow-x: auto otherwise lets it shrink), and the explicit values below
+     override any generic `nav` rules in style.css */
+  flex: 0 0 auto;
+  display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center; justify-content: flex-start;
+  gap: 6px; overflow-x: auto; overflow-y: hidden;
+  width: 100%; height: auto; min-height: 46px; margin: 0; padding: 8px 16px;
+  border-bottom: 1px solid var(--ov-border); background: var(--ov-bg);
+  scrollbar-width: thin;
+}
+.ov-dialog .ov-nav a {
+  flex: 0 0 auto;
+  white-space: nowrap; font-size: 13px; line-height: 1.2; color: var(--ov-muted);
+  padding: 6px 10px; border-radius: 6px;
+}
+.ov-nav a:hover { color: var(--ov-text); background: var(--ov-panel); text-decoration: none; }
+
+/* scrolling body */
+.ov-body { flex: 1 1 auto; min-height: 0; padding: 20px 22px 28px; overflow-y: auto; overscroll-behavior: contain; }
+.ov-body section { margin: 0 0 30px; scroll-margin-top: 8px; }
+.ov-body h3 {
+  font-size: 18px; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--ov-border);
+}
+.ov-body h4 { font-size: 15px; margin: 18px 0 8px; }
+.ov-body p { margin: 0 0 12px; }
+.ov-body ul, .ov-body ol { margin: 0 0 12px; padding-left: 22px; }
+.ov-body li { margin: 3px 0; }
+.ov-lead { color: var(--ov-muted); font-size: 16px; }
+
+.ov-dialog code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: var(--ov-panel-2); border: 1px solid var(--ov-border);
+  padding: 1px 6px; border-radius: 5px; font-size: .88em;
+}
+
+/* demo notice */
+.ov-notice {
+  background: var(--ov-warn-bg); border: 1px solid var(--ov-warn-border);
+  border-left-width: 4px; border-radius: 10px; padding: 14px 16px; margin: 0 0 26px;
+}
+.ov-notice h3 { color: var(--ov-warn-text); border: 0; padding: 0; margin: 0 0 8px; font-size: 16px; }
+.ov-notice ul { margin-bottom: 0; }
+.ov-notice strong { color: var(--ov-warn-text); }
+
+/* tables */
+.ov-table-scroll { overflow-x: auto; margin: 0 0 14px; border: 1px solid var(--ov-border); border-radius: 10px; }
+.ov-dialog table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 540px; }
+.ov-dialog th, .ov-dialog td {
+  padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--ov-border); vertical-align: top;
+}
+.ov-dialog th { background: var(--ov-panel-2); font-weight: 600; white-space: nowrap; }
+.ov-dialog tr:last-child td { border-bottom: 0; }
+.ov-dialog td:first-child { color: var(--ov-muted); font-weight: 600; white-space: nowrap; }
+
+/* diagram */
+.ov-pre {
+  background: var(--ov-code-bg); border: 1px solid var(--ov-border); border-radius: 10px;
+  padding: 14px 16px; overflow-x: auto; margin: 0 0 14px;
+  font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--ov-text);
+}
+
+/* flow steps */
+.ov-flow { counter-reset: ovstep; list-style: none; padding: 0 !important; margin: 0 0 14px; }
+.ov-flow li {
+  counter-increment: ovstep; position: relative; padding: 9px 12px 9px 48px; margin: 7px 0;
+  background: var(--ov-panel); border: 1px solid var(--ov-border); border-radius: 10px;
+}
+.ov-flow li::before {
+  content: counter(ovstep); position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 24px; border-radius: 50%; background: var(--ov-accent); color: #07101c;
+  font-weight: 700; font-size: 12px; display: grid; place-items: center;
+}
+
+/* repo cards */
+.ov-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 0 0 12px; }
+.ov-card { background: var(--ov-panel); border: 1px solid var(--ov-border); border-radius: 10px; padding: 14px 16px; }
+.ov-card h4 { margin: 0 0 4px; }
+.ov-card p { margin: 0; color: var(--ov-muted); font-size: 14px; }
+.ov-card a {
+  display: block; margin-top: 8px; word-break: break-all;
+  font: 12.5px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.ov-tag {
+  display: inline-block; margin-bottom: 6px; padding: 3px 6px; border-radius: 5px;
+  font: 600 10.5px/1 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ov-accent-2); border: 1px solid #25402c; background: #12201a;
+}
+
+/* footer inside the modal */
+.ov-footer-note { color: var(--ov-muted); font-size: 13px; margin: 0; }
+
+/* open-modal triggers placed on the page */
+.ov-open-btn { cursor: pointer; }
+
+@media (max-width: 600px) {
+  .ov-dialog { width: calc(100vw - 12px); max-height: calc(100vh - 12px); border-radius: 10px; }
+  .ov-body { padding: 16px 14px 24px; }
+}

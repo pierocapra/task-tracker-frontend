@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Task Tracker — Multi-Stack Client</title>
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="overview-modal.css">
 </head>
 <body>
   <div class="app">
@@ -29,6 +30,8 @@
           <span class="dot dot-spring"></span> Spring Boot
         </button>
       </nav>
+
+      <button type="button" class="ghost-btn ov-open-btn js-open-overview" aria-haspopup="dialog">Project Overview</button>
     </header>
 
     <div class="connection-bar">
@@ -101,8 +104,197 @@
 
     <footer class="footer">
       <span>Talking to whichever backend the switcher above points at — same UI, four ecosystems.</span>
+      <span> · <a href="#" class="js-open-overview">About this project</a></span>
     </footer>
   </div>
+
+  <!-- Project Overview modal (styles: overview-modal.css, logic: overview-modal.js) -->
+  <dialog id="overviewModal" class="ov-dialog" aria-labelledby="ovTitle">
+    <div class="ov-header">
+      <div>
+        <span class="ov-eyebrow">Learning project</span>
+        <h2 class="ov-title" id="ovTitle">Project Overview</h2>
+      </div>
+      <button type="button" class="ov-close" aria-label="Close project overview">&times;</button>
+    </div>
+
+    <nav class="ov-nav" aria-label="Overview sections">
+      <a href="#ov-purpose">Purpose</a>
+      <a href="#ov-comparison">Stack comparison</a>
+      <a href="#ov-flow">How it works</a>
+      <a href="#ov-contract">API contract</a>
+      <a href="#ov-repos">Repositories</a>
+      <a href="#ov-limits">Limitations</a>
+      <a href="#ov-future">Future</a>
+    </nav>
+
+    <div class="ov-body">
+
+      <div class="ov-notice" role="note">
+        <h3>⚠ Demo notice, please read</h3>
+        <p>This is a <strong>learning and portfolio project, not a production service.</strong></p>
+        <ul>
+          <li><strong>Do not use a real email address.</strong> The email is only a login identifier. It is <strong>not verified</strong>: no confirmation email is sent, and no emails are ever sent at all.</li>
+          <li><strong>Do not use a real password</strong> (or one you use anywhere else). Use something throwaway.</li>
+          <li><strong>There is no multi-factor authentication (MFA)</strong>, no password reset, and no account recovery.</li>
+          <li>Any email-like string works, for example <code>demo@example.com</code>.</li>
+          <li>Data may be wiped at any time, and nothing here is private or secure storage.</li>
+          <li>The backends run on free hosting tiers, so the <strong>first request after inactivity can take 30+ seconds</strong> while the server wakes up. If login seems stuck, wait a moment and try again.</li>
+        </ul>
+      </div>
+
+      <section id="ov-purpose">
+        <h3>The learning purpose</h3>
+        <p class="ov-lead">One simple Task Tracker, built <strong>four times</strong> on four backend frameworks, all driven by <strong>this same frontend</strong>. The point isn't the app, it's comparing how each ecosystem solves the same problems.</p>
+        <p>Many tutorials teach one framework in isolation. I wanted to learn <strong>what is universal about backend development and what is framework-specific</strong>, so I built the same application in sequence on <strong>Node.js (Express)</strong>, <strong>ASP.NET Core</strong>, <strong>Django</strong> and <strong>Spring Boot</strong>. Rebuilding the same thing meant my effort went into <em>how each framework does things</em> rather than <em>what to build</em>, so patterns like routing, middleware, ORMs, validation and authentication became easy to compare.</p>
+
+        <h4>What stayed the same in every stack</h4>
+        <ul>
+          <li>REST endpoints for tasks (create, read, update, delete)</li>
+          <li>User signup and login, returning a JWT</li>
+          <li>Tasks belong to users; a user only sees and modifies their own tasks</li>
+          <li>Another user's task returns <strong>404</strong> (not 403), so its existence isn't leaked</li>
+          <li>Input validation, with errors returned as <code>{ "error": "message" }</code></li>
+          <li>A PostgreSQL database, a <code>/health</code> endpoint, and CORS for this frontend</li>
+          <li>Containerised or managed deployment on Render</li>
+        </ul>
+      </section>
+
+      <section id="ov-comparison">
+        <h3>What differed between stacks</h3>
+        <div class="ov-table-scroll">
+          <table>
+            <thead>
+              <tr><th></th><th>Express</th><th>ASP.NET Core</th><th>Django</th><th>Spring Boot</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Language</td><td>JavaScript / Node</td><td>C#</td><td>Python</td><td>Java 21</td></tr>
+              <tr><td>API style</td><td>Routes + middleware</td><td>Minimal APIs</td><td>Django REST Framework</td><td>Controllers + services</td></tr>
+              <tr><td>ORM</td><td>Prisma</td><td>EF Core</td><td>Django ORM</td><td>Spring Data JPA</td></tr>
+              <tr><td>Validation</td><td>Zod</td><td>Annotations / DTOs</td><td>DRF serializers</td><td>Bean validation</td></tr>
+              <tr><td>Auth</td><td>bcrypt + JWT</td><td>Identity + JWT</td><td>simplejwt</td><td>Spring Security + JWT filter</td></tr>
+              <tr><td>Database</td><td>PostgreSQL (Render)</td><td>PostgreSQL (Neon)</td><td>PostgreSQL (Neon)</td><td>PostgreSQL (Neon)</td></tr>
+              <tr><td>Deployment</td><td>Render</td><td>Render (Docker)</td><td>Render</td><td>Render (Docker)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul>
+          <li><strong>Express</strong> is minimal and flexible; you assemble the structure yourself.</li>
+          <li><strong>ASP.NET Core</strong> is strongly typed and "batteries included", with built-in dependency injection and identity.</li>
+          <li><strong>Django</strong> is opinionated: ORM, auth, admin and settings conventions get you far with little code.</li>
+          <li><strong>Spring Boot</strong> has the most ceremony, but dependency injection and the security filter chain make the structure explicit and consistent at scale.</li>
+        </ul>
+      </section>
+
+      <section id="ov-flow">
+        <h3>How it works</h3>
+<pre class="ov-pre">┌──────────────────────┐        ┌───────────────────────────┐
+│  Frontend (Netlify)  │        │  Backend (one at a time)  │
+│  Plain HTML / JS     │  HTTPS │  Express | ASP.NET |      │
+│  Stack switcher      │ ─────► │  Django  | Spring Boot    │
+└──────────────────────┘  JSON  └─────────────┬─────────────┘
+                                              │
+                                      ┌───────▼────────┐
+                                      │  PostgreSQL    │
+                                      └────────────────┘</pre>
+        <ol class="ov-flow">
+          <li><strong>Pick a backend.</strong> The stack switcher at the top chooses which deployed API this page talks to.</li>
+          <li><strong>Sign up / log in.</strong> The page calls <code>POST /auth/signup</code> and <code>POST /auth/login</code>; login returns a <code>token</code> (a JWT).</li>
+          <li><strong>Store the token.</strong> It is kept in the browser's <code>localStorage</code> (see Limitations).</li>
+          <li><strong>Call the API.</strong> Task requests send <code>Authorization: Bearer &lt;token&gt;</code>.</li>
+          <li><strong>Authorise.</strong> Each backend validates the token, identifies the user, and scopes every query to that user.</li>
+          <li><strong>Respond.</strong> Success returns JSON; failures return <code>{ "error": "..." }</code> with a suitable status code.</li>
+        </ol>
+      </section>
+
+      <section id="ov-contract">
+        <h3>The shared API contract</h3>
+        <div class="ov-table-scroll">
+          <table>
+            <thead><tr><th>Method</th><th>Path</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td>GET</td><td><code>/health</code></td><td>Health check</td></tr>
+              <tr><td>POST</td><td><code>/auth/signup</code></td><td>Create an account</td></tr>
+              <tr><td>POST</td><td><code>/auth/login</code></td><td>Log in, returns <code>{ "token": "..." }</code></td></tr>
+              <tr><td>GET</td><td><code>/tasks</code></td><td>List the current user's tasks</td></tr>
+              <tr><td>POST</td><td><code>/tasks</code></td><td>Create a task</td></tr>
+              <tr><td>PUT</td><td><code>/tasks/:id</code></td><td>Update a task</td></tr>
+              <tr><td>DELETE</td><td><code>/tasks/:id</code></td><td>Delete a task</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>A task has <code>id</code>, <code>title</code>, <code>completed</code> and <code>created_at</code>.</p>
+      </section>
+
+      <section id="ov-repos">
+        <h3>The four backend repositories</h3>
+        <div class="ov-grid">
+          <div class="ov-card">
+            <span class="ov-tag">Stack 1</span>
+            <h4>Node.js / Express</h4>
+            <p>Express, Prisma, Zod, bcrypt, JWT.</p>
+            <a href="https://github.com/pierocapra/task-tracker-express" target="_blank" rel="noopener noreferrer">github.com/pierocapra/task-tracker-express</a>
+          </div>
+          <div class="ov-card">
+            <span class="ov-tag">Stack 2</span>
+            <h4>ASP.NET Core</h4>
+            <p>Minimal APIs, EF Core, ASP.NET Identity.</p>
+            <a href="https://github.com/pierocapra/task-tracker-dotnet" target="_blank" rel="noopener noreferrer">github.com/pierocapra/task-tracker-dotnet</a>
+          </div>
+          <div class="ov-card">
+            <span class="ov-tag">Stack 3</span>
+            <h4>Django</h4>
+            <p>Django REST Framework, simplejwt.</p>
+            <a href="https://github.com/pierocapra/task-tracker-django" target="_blank" rel="noopener noreferrer">github.com/pierocapra/task-tracker-django</a>
+          </div>
+          <div class="ov-card">
+            <span class="ov-tag">Stack 4</span>
+            <h4>Spring Boot</h4>
+            <p>Spring Data JPA, Spring Security, JWT filter.</p>
+            <a href="https://github.com/pierocapra/task-tracker-spring" target="_blank" rel="noopener noreferrer">github.com/pierocapra/task-tracker-spring</a>
+          </div>
+        </div>
+        <p>Each repository has its own setup instructions and environment-variable list.</p>
+      </section>
+
+      <section id="ov-limits">
+        <h3>Known limitations (deliberate trade-offs)</h3>
+        <ul>
+          <li><strong>JWT stored in <code>localStorage</code>.</strong> This keeps the project simple and identical across stacks, but any XSS bug could expose the token. A production app should use HttpOnly cookies.</li>
+          <li><strong>No email verification, MFA, or password reset.</strong> The email is just a unique username.</li>
+          <li><strong>No automated tests or CI pipeline yet.</strong></li>
+          <li><strong>No rate limiting</strong> on login or signup.</li>
+          <li><strong>Free-tier hosting</strong>, so cold starts and no uptime guarantees.</li>
+          <li><strong>Breadth over depth.</strong> The goal was to understand each stack well enough to explain it and build a working CRUD API, not to master any single one.</li>
+        </ul>
+      </section>
+
+      <section id="ov-future">
+        <h3>Possible future improvements</h3>
+        <h4>Security hardening</h4>
+        <ul>
+          <li>Move the token to an <strong>HttpOnly, Secure cookie</strong> with <strong>CSRF protection</strong></li>
+          <li>Short-lived access tokens plus <strong>refresh-token rotation</strong> and server-side revocation</li>
+          <li>Rate limiting, brute-force protection, and security headers (CSP, HSTS)</li>
+          <li>Optional real email verification, password reset, and MFA</li>
+        </ul>
+        <h4>Quality and engineering practice</h4>
+        <ul>
+          <li>Automated unit and integration tests per backend (including "user B cannot access user A's task")</li>
+          <li>CI with GitHub Actions, managed database migrations, structured logging and monitoring</li>
+          <li>OpenAPI/Swagger documentation for every stack</li>
+        </ul>
+        <h4>Product and architecture</h4>
+        <ul>
+          <li>Go deeper on one stack: pagination, filtering, due dates, categories</li>
+          <li>Rebuild the frontend in a framework such as React or Vue</li>
+          <li>A custom domain so frontend and API are same-site</li>
+        </ul>
+      </section>
+
+      <p class="ov-footer-note">Built by Piero Capra as a structured way to learn and compare backend ecosystems.</p>
+    </div>
+  </dialog>
 
   <template id="taskItemTemplate">
     <li class="task-item">
@@ -124,5 +316,6 @@
 
   <script src="config.js"></script>
   <script src="app.js"></script>
+  <script src="overview-modal.js"></script>
 </body>
 </html>
