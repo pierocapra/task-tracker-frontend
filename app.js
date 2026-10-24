@@ -13,8 +13,14 @@ const STORAGE_KEYS = {
   activeStack: "tt_active_stack",
   token: (stack) => `tt_token_${stack}`,
   userLabel: (stack) => `tt_user_${stack}`,
-  customBaseUrl: (stack) => `tt_base_override_${stack}`,
 };
+
+// The backend URL is no longer editable from the UI. Remove any override a
+// previous version of this page saved in this browser, so it can't silently
+// point a stack at the wrong server.
+Object.keys(localStorage)
+  .filter((k) => k.startsWith("tt_base_override_"))
+  .forEach((k) => localStorage.removeItem(k));
 
 // ---------------------------------------------------------------------------
 // SECURITY NOTE — localStorage for the JWT (deliberate, not an oversight)
@@ -45,8 +51,6 @@ let state = {
 // ---------- helpers ----------
 
 function currentBaseUrl() {
-  const override = localStorage.getItem(STORAGE_KEYS.customBaseUrl(state.stack));
-  if (override) return override;
   return STACK_CONFIG[state.stack]?.baseUrl || "";
 }
 
@@ -116,15 +120,6 @@ function initStackSwitcher() {
     if (stack === state.stack) btn.classList.add("is-active");
     if (!btn.disabled) {
       btn.addEventListener("click", () => switchStack(stack));
-    }
-  });
-
-  document.getElementById("editApiBase").addEventListener("click", () => {
-    const current = currentBaseUrl();
-    const next = prompt(`Set the API base URL for ${STACK_CONFIG[state.stack].label}:`, current || "");
-    if (next !== null) {
-      localStorage.setItem(STORAGE_KEYS.customBaseUrl(state.stack), next.trim());
-      refreshConnectionStatus();
     }
   });
 }
