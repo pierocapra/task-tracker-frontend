@@ -76,6 +76,44 @@ function setError(scope, message) {
   if (el) el.textContent = message || "";
 }
 
+// Loading state for a form's submit button: disables the form (blocks double
+// submits), swaps the label for a spinner + busy text, and after a few seconds
+// explains the delay, since the free-tier backends can take 30+ s to wake up.
+const SLOW_HINT_DELAY_MS = 4000;
+
+function setBusy(form, busy, busyLabel) {
+  const btn = form.querySelector('button[type="submit"]');
+  if (!btn) return;
+
+  let hint = form.querySelector(".slow-hint");
+  if (!hint) {
+    hint = document.createElement("p");
+    hint.className = "slow-hint is-hidden";
+    hint.setAttribute("role", "status");
+    hint.textContent = "Still working… the free-tier server may be waking up, which can take 30+ seconds.";
+    btn.insertAdjacentElement("afterend", hint);
+  }
+
+  clearTimeout(form._slowTimer);
+
+  if (busy) {
+    if (!btn.dataset.label) btn.dataset.label = btn.textContent;
+    btn.disabled = true;
+    btn.classList.add("is-loading");
+    btn.setAttribute("aria-busy", "true");
+    btn.textContent = busyLabel;
+    form.querySelectorAll("input").forEach((i) => (i.readOnly = true));
+    form._slowTimer = setTimeout(() => hint.classList.remove("is-hidden"), SLOW_HINT_DELAY_MS);
+  } else {
+    btn.disabled = false;
+    btn.classList.remove("is-loading");
+    btn.removeAttribute("aria-busy");
+    if (btn.dataset.label) btn.textContent = btn.dataset.label;
+    form.querySelectorAll("input").forEach((i) => (i.readOnly = false));
+    hint.classList.add("is-hidden");
+  }
+}
+
 // ---------- connection status ----------
 
 async function refreshConnectionStatus() {
@@ -190,7 +228,8 @@ function initAuthForms() {
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     setError("login", "");
-    const fd = new FormData(loginForm);
+    const fd = new FormData(loginForm); // read values before inputs are locked
+    setBusy(loginForm, true, "Logging in…");
     try {
       const data = await apiFetch(API_ROUTES.login, {
         method: "POST",
@@ -202,6 +241,8 @@ function initAuthForms() {
       loadTasks();
     } catch (err) {
       setError("login", err.message);
+    } finally {
+      setBusy(loginForm, false);
     }
   });
 
@@ -211,6 +252,7 @@ function initAuthForms() {
     const fd = new FormData(signupForm);
     const email = fd.get("email");
     const password = fd.get("password");
+    setBusy(signupForm, true, "Creating account…");
     try {
       // Signup only creates the user — no token comes back — so immediately
       // log in with the same credentials to get a session going.
@@ -228,6 +270,8 @@ function initAuthForms() {
       loadTasks();
     } catch (err) {
       setError("signup", err.message);
+    } finally {
+      setBusy(signupForm, false);
     }
   });
 
